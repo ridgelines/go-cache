@@ -30,6 +30,21 @@ func TestAddBasic(t *testing.T) {
 	}
 }
 
+func TestAddf(t *testing.T) {
+	c := New()
+
+	for i := 0; i < 1000; i++ {
+		item := rand.Int()
+		key := strconv.Itoa(item)
+		c.Addf(key, item, time.Nanosecond)
+	}
+
+	time.Sleep(time.Millisecond)
+	if length, expected := len(c.Keys()), 0; length != expected {
+		t.Errorf("Cache had %d keys, expected %d", length, expected)
+	}
+}
+
 func TestClear(t *testing.T) {
 	c := New()
 	for i := 0; i < 10; i++ {
