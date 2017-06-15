@@ -1,11 +1,11 @@
 package cache
 
 import (
-	"time"
 	"math/rand"
 	"reflect"
 	"strconv"
 	"testing"
+	"time"
 )
 
 func TestAdd(t *testing.T) {
@@ -99,8 +99,8 @@ func TestGet(t *testing.T) {
 }
 
 func TestGetf(t *testing.T) {
-        c := New()
-        c.Add("1", 1)
+	c := New()
+	c.Add("1", 1)
 
 	result, exists := c.Getf("1")
 	if !exists {
@@ -108,10 +108,9 @@ func TestGetf(t *testing.T) {
 	}
 
 	if expected := 1; !reflect.DeepEqual(result, expected) {
-                t.Errorf("Result was %#v, expected %#v", result, expected)
-        }
+		t.Errorf("Result was %#v, expected %#v", result, expected)
+	}
 }
-
 
 func TestItems(t *testing.T) {
 	c := New()

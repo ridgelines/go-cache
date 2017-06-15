@@ -46,14 +46,14 @@ func (c *Cache) Clear() {
 
 // Clears the cache on a loop after the specified duration
 func (c *Cache) ClearEvery(d time.Duration) *time.Ticker {
-        ticker := time.NewTicker(d)
-        go func() {
-                for range ticker.C {
-                        c.Clear()
-                }
-        }()
+	ticker := time.NewTicker(d)
+	go func() {
+		for range ticker.C {
+			c.Clear()
+		}
+	}()
 
-        return ticker
+	return ticker
 }
 
 // Delete an entry from the cache at the specified key.
