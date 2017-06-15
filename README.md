@@ -40,8 +40,8 @@ func main() {
 	c.Addf("three", 3, time.Minute*5)
 	c.Addf("four", 4, time.Minute*5)
 
-	fmt.Println(c.Get("1"))
-	fmt.Println(c.Get("2"))
+	fmt.Println(c.Get("one"))
+	fmt.Println(c.Get("two"))
 	
 	for _, key := range c.Keys() {
 		fmt.Println(key)
