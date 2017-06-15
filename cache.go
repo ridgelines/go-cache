@@ -10,7 +10,7 @@ type Cache struct {
 	ops chan func(map[string]interface{})
 }
 
-// Returns an empty cache
+// New returns an empty cache
 func New() *Cache {
 	c := &Cache{
 		ops: make(chan func(map[string]interface{})),
@@ -27,7 +27,7 @@ func (c *Cache) loop() {
 	}
 }
 
-// Adds an entry into the cache at the specified key.
+// Add inserts an entry into the cache at the specified key.
 // If an entry already exists at the specified key, it will be overwritten
 func (c *Cache) Add(key string, val interface{}) {
 	c.ops <- func(items map[string]interface{}) {
@@ -35,7 +35,7 @@ func (c *Cache) Add(key string, val interface{}) {
 	}
 }
 
-// Removes all entries from the cache
+// Clear removes all entries from the cache
 func (c *Cache) Clear() {
 	c.ops <- func(items map[string]interface{}) {
 		for key := range items {
@@ -44,7 +44,7 @@ func (c *Cache) Clear() {
 	}
 }
 
-// Clears the cache on a loop after the specified duration
+// ClearEvery clears the cache on a loop after the specified duration
 func (c *Cache) ClearEvery(d time.Duration) *time.Ticker {
 	ticker := time.NewTicker(d)
 	go func() {
@@ -56,7 +56,7 @@ func (c *Cache) ClearEvery(d time.Duration) *time.Ticker {
 	return ticker
 }
 
-// Delete an entry from the cache at the specified key.
+// Delete removes an entry from the cache at the specified key.
 // If no entry exists at the specified key, no action is taken
 func (c *Cache) Delete(key string) {
 	c.ops <- func(items map[string]interface{}) {
@@ -66,7 +66,7 @@ func (c *Cache) Delete(key string) {
 	}
 }
 
-// Retrieves an entry at the specified key
+// Get retrieves an entry at the specified key
 func (c *Cache) Get(key string) interface{} {
 	result := make(chan interface{}, 1)
 	c.ops <- func(items map[string]interface{}) {
@@ -76,7 +76,7 @@ func (c *Cache) Get(key string) interface{} {
 	return <-result
 }
 
-// Retrieves an entry at the specified key.
+// Getf retrieves an entry at the specified key.
 // Returns bool specifying if the entry exists
 func (c *Cache) Getf(key string) (interface{}, bool) {
 	result := make(chan interface{}, 1)
@@ -90,7 +90,7 @@ func (c *Cache) Getf(key string) (interface{}, bool) {
 	return <-result, <-exists
 }
 
-// Retrieves all entry in the cache
+// Items retrieves all entries in the cache
 func (c *Cache) Items() map[string]interface{} {
 	result := make(chan map[string]interface{}, 1)
 	c.ops <- func(items map[string]interface{}) {
@@ -100,7 +100,7 @@ func (c *Cache) Items() map[string]interface{} {
 	return <-result
 }
 
-// Retrieves a sorted list of all keys in the cache
+// Keys retrieves a sorted list of all keys in the cache
 func (c *Cache) Keys() []string {
 	result := make(chan []string, 1)
 	c.ops <- func(items map[string]interface{}) {
