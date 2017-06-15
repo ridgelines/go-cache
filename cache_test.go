@@ -97,6 +97,21 @@ func TestGet(t *testing.T) {
 	}
 }
 
+func TestGetf(t *testing.T) {
+        c := New()
+        c.Add("1", 1)
+
+	result, exists := c.Getf("1")
+	if !exists {
+		t.Error("Exists was false, expected true")
+	}
+
+	if expected := 1; !reflect.DeepEqual(result, expected) {
+                t.Errorf("Result was %#v, expected %#v", result, expected)
+        }
+}
+
+
 func TestItems(t *testing.T) {
 	c := New()
 	for i := 0; i < 5; i++ {

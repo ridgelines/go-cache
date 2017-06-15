@@ -77,6 +77,20 @@ func (c *Cache) Get(key string) interface{} {
 	return <-result
 }
 
+// Retrieves an entry at the specified key.
+// Returns bool specifying if the entry exists
+func (c *Cache) Getf(key string) (interface{}, bool) {
+	result := make(chan interface{}, 1)
+	exists := make(chan bool, 1)
+	c.ops <- func(items map[string]interface{}) {
+		v, ok := items[key]
+		result <- v
+		exists <- ok
+	}
+
+	return <-result, <-exists
+}
+
 // Retrieves all entry in the cache
 func (c *Cache) Items() map[string]interface{} {
 	result := make(chan map[string]interface{}, 1)
