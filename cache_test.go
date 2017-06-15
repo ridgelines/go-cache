@@ -1,6 +1,7 @@
 package cache
 
 import (
+	"time"
 	"math/rand"
 	"reflect"
 	"strconv"
@@ -68,9 +69,9 @@ func TestDeleteBasic(t *testing.T) {
 	}
 }
 
-func TestExpire(t *testing.T) {
+func TestClearEvery(t *testing.T) {
 	c := New()
-	ticker := c.Expire(1)
+	ticker := c.ClearEvery(time.Nanosecond)
 
 	for i := 0; i < 10; i++ {
 		c.Add(strconv.Itoa(i), i)

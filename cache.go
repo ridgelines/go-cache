@@ -44,6 +44,19 @@ func (c *Cache) Clear() {
 	}
 }
 
+// todo: this doesn't clear entries after N time, clears eveyrtintg after N time
+// should be clear on this
+func (c *Cache) ClearEvery(d time.Duration) *time.Ticker {
+        ticker := time.NewTicker(d)
+        go func() {
+                for range ticker.C {
+                        c.Clear()
+                }
+        }()
+
+        return ticker
+}
+
 // Delete an entry from the cache at the specified key.
 // If no entry exists at the specified key, no action is taken
 func (c *Cache) Delete(key string) {
@@ -52,19 +65,6 @@ func (c *Cache) Delete(key string) {
 			delete(items, key)
 		}
 	}
-}
-
-// todo: this doesn't clear entries after N time, clears eveyrtintg after N time
-// should be clear on this
-func (c *Cache) Expire(d time.Duration) *time.Ticker {
-	ticker := time.NewTicker(d)
-	go func() {
-		for range ticker.C {
-			c.Clear()
-		}
-	}()
-
-	return ticker
 }
 
 // Retrieves an entry at the specified key
