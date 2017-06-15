@@ -35,7 +35,7 @@ func (c *Cache) Add(key string, val interface{}) {
 	}
 }
 
-// Removes all entries from the Cache
+// Removes all entries from the cache
 func (c *Cache) Clear() {
 	c.ops <- func(items map[string]interface{}) {
 		for key := range items {
@@ -44,8 +44,7 @@ func (c *Cache) Clear() {
 	}
 }
 
-// todo: this doesn't clear entries after N time, clears eveyrtintg after N time
-// should be clear on this
+// Clears the cache on a loop after the specified duration
 func (c *Cache) ClearEvery(d time.Duration) *time.Ticker {
         ticker := time.NewTicker(d)
         go func() {
