@@ -5,7 +5,7 @@ import (
 	"time"
 )
 
-// A Cache is a thread-safe store for fast item storage retrieval
+// A Cache is a thread-safe store for fast item storage and retrieval
 type Cache struct {
 	itemOps   chan func(map[string]interface{})
 	expiryOps chan func(map[string]*time.Timer)

@@ -27,37 +27,37 @@ import (
 )
 
 func main() {
-	cache := cache.New()
+	c := cache.New()
 	
 	// empty the cache every hour
-	cache.ClearEvery(time.Hour)
+	c.ClearEvery(time.Hour)
 	
 	// add some items
-	cache.Add("one", 1)
-	cache.Add("two", 2)
+	c.Add("one", 1)
+	c.Add("two", 2)
 	
 	// add some items that will expire after 5 minutes
-	cache.Addf("three", 3, time.Minute*5)
-	cache.Addf("four", 4, time.Minute*5)
+	c.Addf("three", 3, time.Minute*5)
+	c.Addf("four", 4, time.Minute*5)
 
-	fmt.Println(cache.Get("1"))
-	fmt.Println(cache.Get("2"))
+	fmt.Println(c.Get("one"))
+	fmt.Println(c.Get("two"))
 	
-	for _, key := range cache.Keys() {
+	for _, key := range c.Keys() {
 		fmt.Println(key)
 	}
 	
-	for key, val := range cache.Items() {
+	for key, val := range c.Items() {
 		fmt.Printf("%s: %v", key, val)
 	}
 	
-	cache.Delete("one")
+	c.Delete("one")
 	
-	if val, ok := cache.Getf("two"); ok {
+	if val, ok := c.Getf("two"); ok {
 		fmt.Println(val)
 	}
 	
-	cache.Clear()
+	c.Clear()
 }
 ```
 
