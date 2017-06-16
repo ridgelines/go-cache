@@ -138,7 +138,6 @@ func TestKeys(t *testing.T) {
 func benchmarkAdd(count int, b *testing.B) {
 	for n := 0; n < b.N; n++ {
 		c := New()
-
 		for i := 0; i < count; i++ {
 			c.Add(strconv.Itoa(i), i)
 		}
@@ -152,12 +151,8 @@ func BenchmarkAdd1000(b *testing.B)  { benchmarkAdd(1000, b) }
 func BenchmarkAdd10000(b *testing.B) { benchmarkAdd(10000, b) }
 
 func benchmarkDelete(count int, b *testing.B) {
-	c := New()
-	for i := 0; i < count; i++ {
-		c.Add(strconv.Itoa(i), i)
-	}
-
 	for n := 0; n < b.N; n++ {
+		c := New()
 		for i := 0; i < count; i++ {
 			c.Delete(strconv.Itoa(i))
 		}
@@ -170,23 +165,13 @@ func BenchmarkDelete100(b *testing.B)   { benchmarkDelete(100, b) }
 func BenchmarkDelete1000(b *testing.B)  { benchmarkDelete(1000, b) }
 func BenchmarkDelete10000(b *testing.B) { benchmarkDelete(10000, b) }
 
-var result interface{}
-
 func benchmarkGet(count int, b *testing.B) {
-	c := New()
-	for i := 0; i < count; i++ {
-		c.Add(strconv.Itoa(i), i)
-	}
-
-	// avoid compiler optimizations
-	var v interface{}
 	for n := 0; n < b.N; n++ {
+		c := New()
 		for i := 0; i < count; i++ {
-			v = c.Get(strconv.Itoa(i))
+			c.Get(strconv.Itoa(i))
 		}
 	}
-
-	result = v
 }
 
 func BenchmarkGet1(b *testing.B)     { benchmarkGet(1, b) }
