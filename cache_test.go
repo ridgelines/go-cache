@@ -1,6 +1,7 @@
 package cache
 
 import (
+	"math/rand"
 	"reflect"
 	"strconv"
 	"testing"
@@ -132,6 +133,43 @@ func TestKeys(t *testing.T) {
 	expected := []string{"0", "1", "2", "3", "4"}
 	if result := c.Keys(); !reflect.DeepEqual(result, expected) {
 		t.Errorf("Result was %#v, expected %#v", result, expected)
+	}
+}
+
+func TestStressConcurrentAccess(t *testing.T) {
+	done := make(chan bool)
+	c := New()
+	c.ClearEvery(time.Nanosecond * 10)
+
+	for i := 0; i < 1000; i++ {
+		go func() {
+			key := strconv.Itoa(rand.Int())
+			
+			switch rand.Intn(8) {
+			case 0:
+				c.Add(key, rand.Int())
+			case 1:
+				c.Addf(key, rand.Int(), time.Nanosecond*5)
+			case 2:
+				c.Clear()
+			case 3:
+				c.Delete(key)
+			case 4:
+				c.Get(key)
+			case 5:
+				c.Getf(key)
+			case 6:
+				c.Items()
+			case 7:
+				c.Keys()
+			}
+
+			done <- true
+		}()
+	}
+
+	for i := 0; i < 1000; i++ {
+		<-done
 	}
 }
 
