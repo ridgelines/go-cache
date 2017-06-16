@@ -137,10 +137,10 @@ func TestKeys(t *testing.T) {
 }
 
 func TestStressConcurrentAccess(t *testing.T) {
-	done := make(chan bool)
 	c := New()
 	c.ClearEvery(time.Nanosecond * 10)
 
+	done := make(chan bool)
 	for i := 0; i < 1000; i++ {
 		go func() {
 			key := strconv.Itoa(rand.Int())
