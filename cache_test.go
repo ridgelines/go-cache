@@ -144,7 +144,7 @@ func TestStressConcurrentAccess(t *testing.T) {
 	for i := 0; i < 1000; i++ {
 		go func() {
 			key := strconv.Itoa(rand.Int())
-			
+
 			switch rand.Intn(8) {
 			case 0:
 				c.Add(key, rand.Int())

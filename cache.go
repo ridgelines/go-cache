@@ -118,7 +118,12 @@ func (c *Cache) Getf(key string) (interface{}, bool) {
 func (c *Cache) Items() map[string]interface{} {
 	result := make(chan map[string]interface{}, 1)
 	c.itemOps <- func(items map[string]interface{}) {
-		result <- items
+		cp := map[string]interface{}{}
+		for key, val := range items {
+			cp[key] = val
+		}
+
+		result <- cp
 	}
 
 	return <-result
