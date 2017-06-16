@@ -5,17 +5,26 @@ import (
 	"time"
 )
 
+// CachedValue is a type for cache value
+type CachedValue interface{}
+
+// CachedItems is a map for CachedValue
+type CachedItems map[string]CachedValue
+
+// CachedExpiries is a map for Timer
+type CachedExpiries map[string]*time.Timer
+
 // A Cache is a thread-safe store for fast item storage and retrieval
 type Cache struct {
-	itemOps   chan func(map[string]interface{})
-	expiryOps chan func(map[string]*time.Timer)
+	itemOps   chan func(CachedItems)
+	expiryOps chan func(CachedExpiries)
 }
 
 // New returns an empty cache
 func New() *Cache {
 	c := &Cache{
-		itemOps:   make(chan func(map[string]interface{})),
-		expiryOps: make(chan func(map[string]*time.Timer)),
+		itemOps:   make(chan func(CachedItems)),
+		expiryOps: make(chan func(CachedExpiries)),
 	}
 
 	go c.loopItemOps()
@@ -24,14 +33,14 @@ func New() *Cache {
 }
 
 func (c *Cache) loopItemOps() {
-	items := map[string]interface{}{}
+	items := CachedItems{}
 	for op := range c.itemOps {
 		op(items)
 	}
 }
 
 func (c *Cache) loopExpiryOps() {
-	expiries := map[string]*time.Timer{}
+	expiries := CachedExpiries{}
 	for op := range c.expiryOps {
 		op(expiries)
 	}
@@ -39,18 +48,18 @@ func (c *Cache) loopExpiryOps() {
 
 // Add inserts an entry into the cache at the specified key.
 // If an entry already exists at the specified key, it will be overwritten
-func (c *Cache) Add(key string, val interface{}) {
-	c.itemOps <- func(items map[string]interface{}) {
+func (c *Cache) Add(key string, val CachedValue) {
+	c.itemOps <- func(items CachedItems) {
 		items[key] = val
 	}
 }
 
 // Addf inserts an entry into the cache at the specified key with an expiry.
 // If an entry already exists at the specified key, the value and expiry will be overwritten
-func (c *Cache) Addf(key string, val interface{}, expiry time.Duration) {
+func (c *Cache) Addf(key string, val CachedValue, expiry time.Duration) {
 	c.Add(key, val)
 
-	c.expiryOps <- func(expiries map[string]*time.Timer) {
+	c.expiryOps <- func(expiries CachedExpiries) {
 		if timer, ok := expiries[key]; ok {
 			timer.Stop()
 		}
@@ -61,7 +70,7 @@ func (c *Cache) Addf(key string, val interface{}, expiry time.Duration) {
 
 // Clear removes all entries from the cache
 func (c *Cache) Clear() {
-	c.itemOps <- func(items map[string]interface{}) {
+	c.itemOps <- func(items CachedItems) {
 		for key := range items {
 			delete(items, key)
 		}
@@ -83,7 +92,7 @@ func (c *Cache) ClearEvery(d time.Duration) *time.Ticker {
 // Delete removes an entry from the cache at the specified key.
 // If no entry exists at the specified key, no action is taken
 func (c *Cache) Delete(key string) {
-	c.itemOps <- func(items map[string]interface{}) {
+	c.itemOps <- func(items CachedItems) {
 		if _, ok := items[key]; ok {
 			delete(items, key)
 		}
@@ -91,9 +100,9 @@ func (c *Cache) Delete(key string) {
 }
 
 // Get retrieves an entry at the specified key
-func (c *Cache) Get(key string) interface{} {
-	result := make(chan interface{}, 1)
-	c.itemOps <- func(items map[string]interface{}) {
+func (c *Cache) Get(key string) CachedValue {
+	result := make(chan CachedValue, 1)
+	c.itemOps <- func(items CachedItems) {
 		result <- items[key]
 	}
 
@@ -102,10 +111,10 @@ func (c *Cache) Get(key string) interface{} {
 
 // Getf retrieves an entry at the specified key.
 // Returns bool specifying if the entry exists
-func (c *Cache) Getf(key string) (interface{}, bool) {
-	result := make(chan interface{}, 1)
+func (c *Cache) Getf(key string) (CachedValue, bool) {
+	result := make(chan CachedValue, 1)
 	exists := make(chan bool, 1)
-	c.itemOps <- func(items map[string]interface{}) {
+	c.itemOps <- func(items CachedItems) {
 		v, ok := items[key]
 		result <- v
 		exists <- ok
@@ -115,9 +124,9 @@ func (c *Cache) Getf(key string) (interface{}, bool) {
 }
 
 // Items retrieves all entries in the cache
-func (c *Cache) Items() map[string]interface{} {
-	result := make(chan map[string]interface{}, 1)
-	c.itemOps <- func(items map[string]interface{}) {
+func (c *Cache) Items() CachedItems {
+	result := make(chan CachedItems, 1)
+	c.itemOps <- func(items CachedItems) {
 		result <- items
 	}
 
@@ -127,7 +136,7 @@ func (c *Cache) Items() map[string]interface{} {
 // Keys retrieves a sorted list of all keys in the cache
 func (c *Cache) Keys() []string {
 	result := make(chan []string, 1)
-	c.itemOps <- func(items map[string]interface{}) {
+	c.itemOps <- func(items CachedItems) {
 		keys := make([]string, 0, len(items))
 		for k := range items {
 			keys = append(keys, k)
