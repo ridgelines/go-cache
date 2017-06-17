@@ -111,7 +111,7 @@ func TestItems(t *testing.T) {
 		c.Add(strconv.Itoa(i), i)
 	}
 
-	expected := CachedItems{
+	expected := map[string]T{
 		"0": 0,
 		"1": 1,
 		"2": 2,
