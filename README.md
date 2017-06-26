@@ -13,7 +13,7 @@ It's my attempt to practice some of the patterns/philosophies found in these art
 * [Share Memory By Communicating](https://blog.golang.org/share-memory-by-communicating)
 
 The code is [tested](https://github.com/zpatrick/go-cache/blob/master/cache_test.go), although standard caveats of using `interface{}` apply.  
-Personally, I'd recommend copying this package and replacing `interface{}` with whatever type you need to cache. 
+Personally, I'd recommend copying this package and replacing `var T interface{}` with whatever type you need to cache. 
 I may add code generation in the future to make that process easier. 
 
 ## Example
