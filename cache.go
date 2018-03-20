@@ -40,26 +40,25 @@ func (c *Cache) loopExpiryOps() {
 	}
 }
 
-// Add inserts an entry into the cache at the specified key.
+// Set insterts an entry into the cache at the specified key.
 // If an entry already exists at the specified key, it will be overwritten
-func (c *Cache) Add(key string, val T) {
+func (c *Cache) Set(key string, val T) {
 	c.expiryOps <- func(expiries map[string]*time.Timer) {
 		if timer, ok := expiries[key]; ok {
 			timer.Stop()
 			delete(expiries, key)
 		}
 	}
-	
+
 	c.itemOps <- func(items map[string]T) {
 		items[key] = val
 	}
 }
 
-// Addf inserts an entry into the cache at the specified key with an expiry.
+// Setf inserts an entry into the cache at the specified key with an expiry.
 // If an entry already exists at the specified key, the value and expiry will be overwritten
-func (c *Cache) Addf(key string, val T, expiry time.Duration) {
-	c.Add(key, val)
-
+func (c *Cache) Setf(key string, val T, expiry time.Duration) {
+	c.Set(key, val)
 	c.expiryOps <- func(expiries map[string]*time.Timer) {
 		if timer, ok := expiries[key]; ok {
 			timer.Stop()

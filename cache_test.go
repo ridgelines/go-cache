@@ -8,18 +8,18 @@ import (
 	"time"
 )
 
-func TestAdd(t *testing.T) {
+func TestSet(t *testing.T) {
 	c := New()
-	c.Add("1", 1)
+	c.Set("1", 1)
 
 	if result, expected := c.Get("1"), 1; !reflect.DeepEqual(result, expected) {
 		t.Errorf("Result was %#v, expected %#v", result, expected)
 	}
 }
 
-func TestAddf(t *testing.T) {
+func TestSetf(t *testing.T) {
 	c := New()
-	c.Addf("1", 1, time.Millisecond)
+	c.Setf("1", 1, time.Millisecond)
 
 	if _, exists := c.Getf("1"); !exists {
 		t.Errorf("Entry for key '1' should not have expired yet")
@@ -35,7 +35,7 @@ func TestAddf(t *testing.T) {
 func TestClear(t *testing.T) {
 	c := New()
 	for i := 0; i < 10; i++ {
-		c.Add(strconv.Itoa(i), i)
+		c.Set(strconv.Itoa(i), i)
 	}
 
 	c.Clear()
@@ -47,7 +47,7 @@ func TestClear(t *testing.T) {
 
 func TestDelete(t *testing.T) {
 	c := New()
-	c.Add("1", 1)
+	c.Set("1", 1)
 	c.Delete("1")
 
 	if _, exists := c.Getf("1"); exists {
@@ -58,7 +58,7 @@ func TestDelete(t *testing.T) {
 func TestClearEvery(t *testing.T) {
 	c := New()
 	for i := 0; i < 10; i++ {
-		c.Add(strconv.Itoa(i), i)
+		c.Set(strconv.Itoa(i), i)
 	}
 
 	c.ClearEvery(time.Millisecond)
@@ -76,7 +76,7 @@ func TestClearEvery(t *testing.T) {
 
 func TestGet(t *testing.T) {
 	c := New()
-	c.Add("1", 1)
+	c.Set("1", 1)
 
 	if result, expected := c.Get("1"), 1; !reflect.DeepEqual(result, expected) {
 		t.Errorf("Result for entry '1' was %#v, expected %#v", result, expected)
@@ -89,7 +89,7 @@ func TestGet(t *testing.T) {
 
 func TestGetf(t *testing.T) {
 	c := New()
-	c.Add("1", 1)
+	c.Set("1", 1)
 
 	result, exists := c.Getf("1")
 	if !exists {
@@ -108,7 +108,7 @@ func TestGetf(t *testing.T) {
 func TestItems(t *testing.T) {
 	c := New()
 	for i := 0; i < 5; i++ {
-		c.Add(strconv.Itoa(i), i)
+		c.Set(strconv.Itoa(i), i)
 	}
 
 	expected := map[string]T{
@@ -127,7 +127,7 @@ func TestItems(t *testing.T) {
 func TestKeys(t *testing.T) {
 	c := New()
 	for i := 0; i < 5; i++ {
-		c.Add(strconv.Itoa(i), i)
+		c.Set(strconv.Itoa(i), i)
 	}
 
 	expected := []string{"0", "1", "2", "3", "4"}
@@ -147,9 +147,9 @@ func TestStressConcurrentAccess(t *testing.T) {
 
 			switch rand.Intn(8) {
 			case 0:
-				c.Add(key, rand.Int())
+				c.Set(key, rand.Int())
 			case 1:
-				c.Addf(key, rand.Int(), time.Nanosecond*5)
+				c.Setf(key, rand.Int(), time.Nanosecond*5)
 			case 2:
 				c.Clear()
 			case 3:
@@ -173,21 +173,21 @@ func TestStressConcurrentAccess(t *testing.T) {
 	}
 }
 
-func benchmarkAdd(count int, b *testing.B) {
+func benchmarkSet(count int, b *testing.B) {
 	c := New()
 
 	for n := 0; n < b.N; n++ {
 		for i := 0; i < count; i++ {
-			c.Add(strconv.Itoa(i), i)
+			c.Set(strconv.Itoa(i), i)
 		}
 	}
 }
 
-func BenchmarkAdd1(b *testing.B)     { benchmarkAdd(1, b) }
-func BenchmarkAdd10(b *testing.B)    { benchmarkAdd(10, b) }
-func BenchmarkAdd100(b *testing.B)   { benchmarkAdd(100, b) }
-func BenchmarkAdd1000(b *testing.B)  { benchmarkAdd(1000, b) }
-func BenchmarkAdd10000(b *testing.B) { benchmarkAdd(10000, b) }
+func BenchmarkSet1(b *testing.B)     { benchmarkSet(1, b) }
+func BenchmarkSet10(b *testing.B)    { benchmarkSet(10, b) }
+func BenchmarkSet100(b *testing.B)   { benchmarkSet(100, b) }
+func BenchmarkSet1000(b *testing.B)  { benchmarkSet(1000, b) }
+func BenchmarkSet10000(b *testing.B) { benchmarkSet(10000, b) }
 
 func benchmarkDelete(count int, b *testing.B) {
 	c := New()
