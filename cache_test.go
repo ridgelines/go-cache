@@ -17,17 +17,17 @@ func TestSet(t *testing.T) {
 	}
 }
 
-func TestSetf(t *testing.T) {
+func TestSetExpire(t *testing.T) {
 	c := New()
-	c.Setf("1", 1, time.Millisecond)
+	c.Set("1", 1, Expire(time.Millisecond))
 
-	if _, exists := c.Getf("1"); !exists {
+	if _, exists := c.GetOK("1"); !exists {
 		t.Errorf("Entry for key '1' should not have expired yet")
 	}
 
 	time.Sleep(time.Millisecond * 2)
 
-	if _, exists := c.Getf("1"); exists {
+	if _, exists := c.GetOK("1"); exists {
 		t.Errorf("Entry for key '1' should have expired by now")
 	}
 }
@@ -50,7 +50,7 @@ func TestDelete(t *testing.T) {
 	c.Set("1", 1)
 	c.Delete("1")
 
-	if _, exists := c.Getf("1"); exists {
+	if _, exists := c.GetOK("1"); exists {
 		t.Errorf("Entry for key '1' should not exist")
 	}
 }
@@ -87,11 +87,11 @@ func TestGet(t *testing.T) {
 	}
 }
 
-func TestGetf(t *testing.T) {
+func TestGetOK(t *testing.T) {
 	c := New()
 	c.Set("1", 1)
 
-	result, exists := c.Getf("1")
+	result, exists := c.GetOK("1")
 	if !exists {
 		t.Error("Entry for key '1' should exist")
 	}
@@ -100,7 +100,7 @@ func TestGetf(t *testing.T) {
 		t.Errorf("Entry for key '1' was %#v, expected %#v", result, expected)
 	}
 
-	if _, exists := c.Getf("2"); exists {
+	if _, exists := c.GetOK("2"); exists {
 		t.Errorf("Entry for key '2' should not exist")
 	}
 }
@@ -149,7 +149,7 @@ func TestStressConcurrentAccess(t *testing.T) {
 			case 0:
 				c.Set(key, rand.Int())
 			case 1:
-				c.Setf(key, rand.Int(), time.Nanosecond*5)
+				c.Set(key, rand.Int(), Expire(time.Nanosecond*5))
 			case 2:
 				c.Clear()
 			case 3:
@@ -157,7 +157,7 @@ func TestStressConcurrentAccess(t *testing.T) {
 			case 4:
 				c.Get(key)
 			case 5:
-				c.Getf(key)
+				c.GetOK(key)
 			case 6:
 				c.Items()
 			case 7:
