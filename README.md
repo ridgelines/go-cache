@@ -33,15 +33,15 @@ func main() {
 	c.ClearEvery(time.Hour)
 	
 	// add some items
-	c.Add("one", 1)
-	c.Add("two", 2)
+	c.Set("key1", 1)
+	c.Set("key2", 2)
 	
 	// add some items that will expire after 5 minutes
-	c.Addf("three", 3, time.Minute*5)
-	c.Addf("four", 4, time.Minute*5)
+	c.Set("key3", 3, cache.Expire(time.Minute*5))
+	c.Set("key4", 4,  cache.Expire(time.Minute*5))
 
-	fmt.Println(c.Get("one"))
-	fmt.Println(c.Get("two"))
+	fmt.Println(c.Get("key1"))
+	fmt.Println(c.Get("key2"))
 	
 	for _, key := range c.Keys() {
 		fmt.Println(key)
@@ -51,9 +51,9 @@ func main() {
 		fmt.Printf("%s: %v", key, val)
 	}
 	
-	c.Delete("one")
+	c.Delete("key1")
 	
-	if val, ok := c.Getf("two"); ok {
+	if val, ok := c.GetOK("key2"); ok {
 		fmt.Println(val)
 	}
 	
