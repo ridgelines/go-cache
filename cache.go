@@ -82,9 +82,7 @@ func (c *Cache[T]) ClearEvery(d time.Duration) *time.Ticker {
 // If no entry exists at the specified key, no action is taken
 func (c *Cache[T]) Delete(key string) {
 	c.itemOps <- func(items map[string]T) {
-		if _, ok := items[key]; ok {
-			delete(items, key)
-		}
+		delete(items, key)
 	}
 }
 
