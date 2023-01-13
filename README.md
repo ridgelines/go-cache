@@ -1,8 +1,8 @@
 # Go Cache
 
-[![MIT License](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/zpatrick/go-cache/blob/master/LICENSE)
-[![Go Report Card](https://goreportcard.com/badge/github.com/zpatrick/go-cache)](https://goreportcard.com/report/github.com/zpatrick/go-cache)
-[![Go Doc](https://godoc.org/github.com/zpatrick/go-cache?status.svg)](https://godoc.org/github.com/zpatrick/go-cache)
+[![MIT License](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/ridgelines/go-cache/blob/master/LICENSE)
+[![Go Report Card](https://goreportcard.com/badge/github.com/ridgelines/go-cache)](https://goreportcard.com/report/github.com/ridgelines/go-cache)
+[![Go Doc](https://godoc.org/github.com/ridgelines/go-cache?status.svg)](https://godoc.org/github.com/ridgelines/go-cache)
 
 
 ## Overview
@@ -12,7 +12,7 @@ It's my attempt to practice some of the patterns/philosophies found in these art
 * [Do not fear first class functions](https://dave.cheney.net/2016/11/13/do-not-fear-first-class-functions)
 * [Share Memory By Communicating](https://blog.golang.org/share-memory-by-communicating)
 
-The code is [tested](https://github.com/zpatrick/go-cache/blob/master/cache_test.go), although standard caveats of using `interface{}` apply.  
+The code is [tested](https://github.com/ridgelines/go-cache/blob/master/cache_test.go), although standard caveats of using `interface{}` apply.  
 Personally, I'd recommend copying this package and replacing `var T interface{}` with whatever type you need to cache. 
 I may add code generation in the future to make that process easier. 
 
@@ -23,7 +23,7 @@ package main
 import (
         "fmt"
 	"time"
-        "github.com/zpatrick/go-cache"
+        "github.com/ridgelines/go-cache"
 )
 
 func main() {
